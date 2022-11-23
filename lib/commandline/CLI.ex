@@ -20,8 +20,6 @@ defmodule Commandline.CLI do
   def get_response([from_url, to_url]) do
     response = HTTPoison.get! from_url
 
-    # status_code = response.status_code
-
     location_header = Enum.find(response.headers, nil, fn r -> elem(r, 0) == "Location" end)
 
     redirect_to = case location_header do
