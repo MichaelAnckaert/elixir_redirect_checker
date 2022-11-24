@@ -1,7 +1,7 @@
 defmodule Commandline.CLI do
   def main(args) do
-    options = [switches: [filename: :string],aliases: [f: :filename]]
-    {opts, _, _}= OptionParser.parse(args, options)
+    options = [switches: [filename: :string], aliases: [f: :filename]]
+    {opts, _, _} = OptionParser.parse(args, options)
 
     [{:filename, filename}] = opts
 
@@ -14,18 +14,20 @@ defmodule Commandline.CLI do
     |> Stream.map(&String.split(&1, ","))
     |> Stream.map(&get_response/1)
     |> Stream.map(&verify_response/1)
-    |> Enum.map(fn result -> IO.inspect result end)
+    |> Enum.map(fn result -> IO.inspect(result) end)
   end
 
   def get_response([from_url, to_url]) do
-    response = HTTPoison.get! from_url
+    response = HTTPoison.get!(from_url)
 
     location_header = Enum.find(response.headers, nil, fn r -> elem(r, 0) == "Location" end)
 
-    redirect_to = case location_header do
-                    {"Location", loc} -> loc
-                    nil -> nil
-                  end
+    redirect_to =
+      case location_header do
+        {"Location", loc} -> loc
+        nil -> nil
+      end
+
     {redirect_to, from_url, to_url}
   end
 
